@@ -1,7 +1,7 @@
 {
-  "vendor": "vtex",
+  "vendor": "chapurmx",
   "name": "product-quantity",
-  "version": "1.9.0",
+  "version": "0.0.0",
   "title": "Product Quantity",
   "description": "Product quantity",
   "builders": {
@@ -19,7 +19,8 @@
     "vtex.product-context": "0.x",
     "vtex.product-summary-context": "0.x",
     "vtex.css-handles": "0.x",
-    "vtex.device-detector": "0.x"
+    "vtex.device-detector": "0.x",
+    "vtex.order-manager": "0.x"
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
