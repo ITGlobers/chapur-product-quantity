@@ -1,7 +1,7 @@
 {
   "vendor": "chapurmx",
   "name": "product-quantity",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "title": "Product Quantity",
   "description": "Product quantity",
   "builders": {
