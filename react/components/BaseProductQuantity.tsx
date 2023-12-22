@@ -8,6 +8,9 @@ import { OrderForm } from 'vtex.order-manager'
 import DropdownProductQuantity from './DropdownProductQuantity'
 import StepperProductQuantity from './StepperProductQuantity'
 
+import { useLazyQuery } from 'react-apollo'
+import GET_SECURITY_INVENTORY from '../graphql/getSecurityInventory.gql'
+
 export type NumericSize = 'small' | 'regular' | 'large'
 export type SelectorType = 'stepper' | 'dropdown'
 export type QuantitySelectorStepType = 'unitMultiplier' | 'singleUnit'
@@ -69,6 +72,8 @@ const BaseProductQuantity: StorefrontFunctionComponent<BaseProps> = ({
     [dispatch]
   )
 
+  const [getSecurityInventory, { data: securityInventory }] = useLazyQuery(GET_SECURITY_INVENTORY);
+
   const [availableQuantity, setAvailableQuantity] = useState(selectedItem?.sellers?.find(({ sellerDefault }) => sellerDefault === true)
   ?.commertialOffer?.AvailableQuantity ?? 0)
    
@@ -87,17 +92,34 @@ const BaseProductQuantity: StorefrontFunctionComponent<BaseProps> = ({
 
     if(!refId || !skuId) return
 
+    getSecurityInventory({
+      variables: {
+        skuId: skuId,
+        securityInventoryQuantity: 2
+      }
+    })
+
+    const summaryQuantity = securityInventory?.securityInventory
+
+    const totalReservedQuantity = summaryQuantity?.inventory?.reduce(
+      (sum: number, inventories: any) =>
+        sum + inventories.reservedQuantity,
+      0
+    )
+
+    const totalQuantity = summaryQuantity?.totalSecureQuantity - totalReservedQuantity ?? 0
+
     const getIsVirtual = async () => {
       const res = await fetch(`/chapur/v1/sku-virtual/${giftTableId}/${refId}/${skuId}`)
       const data = await res.json()
       const virtual = data.virtual ?? false
-      const physicalInventory = data.physicalInventory ?? 0
+      const physicalInventory = totalQuantity ?? data.physicalInventory ?? 0
 
       setAvailableQuantity(virtual ? VIRTUAL_MAX_VALUE : physicalInventory)
     }
 
     getIsVirtual()
-  }, [mdr, selectedItem.itemId])
+  }, [mdr, selectedItem.itemId, securityInventory])
   
   const showAvailable = availableQuantity <= warningQuantityThreshold
   const unitMultiplier =

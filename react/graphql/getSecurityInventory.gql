@@ -1,0 +1,15 @@
+query ($skuId: String!, $securityInventoryQuantity: Int!) {
+  securityInventory(skuId: $skuId, securityInventoryQuantity: $securityInventoryQuantity) {
+    inventory{
+      warehouseId
+      warehouseName
+      totalQuantity
+      reservedQuantity
+      securityQuantity
+      hasUnlimitedQuantity
+    }
+    totalQuantity
+    totalSecureQuantity
+    securityQuantity
+  }
+}
